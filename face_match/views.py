@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from subprocess import Popen, PIPE
 import os
 import logging
+import sys
 #Project includes
 from face_match import __file__
 from face_match.serializers import IdSerializer
@@ -36,20 +37,19 @@ def compare_faces(request):
 
         if data.is_valid():
             ids = []
-            ## Calling c++ function with output
-            try:
-                p = Popen([path + "/random","42"], stdoutr=PIPE)
-                code = p.wait()
-                output = p.stdout.read()
-                print output
-                # Do whatever you need to do with the output
-            except :
-                logger.error('Unexpected error ', sys.exc_info()[1])
-                raise
+        ## Calling c++ function with output
+            p = Popen([path + "/random", "42"], stdout=PIPE)
+            code = p.wait()
+            if code != 0:
+                raise RuntimeError
+            output = p.stdout.read()
+            print output
+            # Do whatever you need to do with the output
+            logger.error('Unexpected error ', sys.exc_info()[1])
 
 
             # Generating JSON content
-            for i in range(21,42):
+            for i in range(21,43):
                 ids.append(Id(i))
 
             ids_response = IdSerializer(ids, many=True)
@@ -69,7 +69,3 @@ def compare_faces(request):
         #raise MethodNotAllowed(method, "Allowed methods: POST")
         form = ImageDetected()
         return render_to_response('form.html', { 'form' : form } )
-        
-
-
-
