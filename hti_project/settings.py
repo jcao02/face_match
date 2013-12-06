@@ -1,5 +1,8 @@
 # Django settings for hti_project project.
+import os
+import logging
 
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -148,6 +151,10 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
+        },
+        'console':{
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler'
         }
     },
     'loggers': {
@@ -157,4 +164,16 @@ LOGGING = {
             'propagate': True,
         },
     }
+}
+
+
+REST_FRAMEWORK = {
+        'DEFAULT_PARSER_CLASSES' : (
+            'rest_framework.parsers.JSONParser',
+            'rest_framework.parsers.MultiPartParser',
+        ),
+        'DEFAULT_RENDERER_CLASSES' : (
+            'rest_framework.renderers.JSONRenderer',
+        )
+        
 }

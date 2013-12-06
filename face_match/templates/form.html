@@ -1,0 +1,11 @@
+<h1 id="titulo">Face matching app</h1>
+
+{% if error_message  %}<p>{{ error_message }}</p> {% endif %}
+
+
+<form action="{% url 'face_match:compare_faces' %}" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  {{ form }}
+  <p><input type="submit" value="Send"></p>
+</form>

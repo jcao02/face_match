@@ -1,12 +1,18 @@
 from rest_framework import serializers
 
-
-
-# Serializer here
-# Maybe we don't need serialization at all
-#class AccessTokenSerializer(serializers.Serializer):
-    #token = serializers.CharField(max_length=500) #There isn't a defined size for the tokens
-
-#class AccessTokenSerializer(serializers.Serializer):
+#Id serializer
 class IdSerializer(serializers.Serializer):
-    id = serializer.IntegerField()
+    id = serializers.IntegerField()
+
+    def restore_object(self,attrs, instance=None):
+        """
+        Create or update a new Id instance, given dictionary
+        or deserialized field values
+        """
+        if instance:
+            instance.id = attrs.get('id', instance.id)
+
+            return instance
+
+
+        return Id(**attrs)
