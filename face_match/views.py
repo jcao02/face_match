@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 #Disabling csrf token since the request is from android
 @csrf_exempt
 #Final version supppose to have only POST method allowed
-@api_view(['GET', 'POST'])
+@api_view(['POST'])
 def compare_faces(request):
     """
     Action that compares the given face with the given API 
@@ -63,6 +63,7 @@ def compare_faces(request):
             logger.error('Unsupported media type ' + ext + ' sent to the server')
             raise UnsupportedMediaType(ext, "Supported media types: JPEG")
     else:
+        print "GET METHOD CALLED-----------------------------------------------------"
         method = str(request.method)
         logger.error('Not allowed method ' + method + ' called')
         # Raise method not allowed exception if the method isn't POST
