@@ -63,9 +63,9 @@ def compare_faces(request):
             logger.error('Unsupported media type ' + ext + ' sent to the server')
             raise UnsupportedMediaType(ext, "Supported media types: JPEG")
     else:
-        print "GET METHOD CALLED-----------------------------------------------------"
         method = str(request.method)
         logger.error('Not allowed method ' + method + ' called')
+        print "GET METHOD CALLED-----------------------------------------------------"
         # Raise method not allowed exception if the method isn't POST
         #raise MethodNotAllowed(method, "Allowed methods: POST")
         form = ImageDetected()
