@@ -9,7 +9,7 @@ class ImageDetected(forms.Form):
         """Validates image extension"""
         valid = super(ImageDetected, self).is_valid()
         ext = self.get_extension()
-        valid = valid and ext == ".jpeg"
+        valid = valid and (ext == ".jpeg" or ext == ".JPEG")
         return valid
 
     def get_extension(self):
