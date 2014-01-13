@@ -32,9 +32,9 @@ def compare_faces(request):
     Request data: Image 
     Response: list of integer (facebook_ids)
     """
+
     if request.method == 'POST':
         data = ImageDetected(request.POST, request.FILES)
-
         if data.is_valid():
             ids = []
         ## Calling c++ function with output
@@ -65,8 +65,5 @@ def compare_faces(request):
     else:
         method = str(request.method)
         logger.error('Not allowed method ' + method + ' called')
-        print "GET METHOD CALLED-----------------------------------------------------"
         # Raise method not allowed exception if the method isn't POST
-        #raise MethodNotAllowed(method, "Allowed methods: POST")
-        form = ImageDetected()
-        return render_to_response('form.html', { 'form' : form } )
+        raise MethodNotAllowed(method, "Allowed methods: POST")
