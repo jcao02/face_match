@@ -35,8 +35,8 @@ def compare_faces(request):
 
     if request.method == 'POST':
         data = ImageDetected(request.POST, request.FILES)
+        ids = []
         if data.is_valid():
-            ids = []
         ## Calling c++ function with output
             p = Popen([path + "/random", "42"], stdout=PIPE)
             code = p.wait()
@@ -59,9 +59,11 @@ def compare_faces(request):
 
             return Response(ids_response.data)
         else:
-            ext = data.get_extension()
-            logger.error('Unsupported media type ' + str(ext) + ' sent to the server')
-            raise UnsupportedMediaType(str(ext), "Supported media types: JPEG")
+            ids_response = IdSerializer(ids, many=True)
+            return Response(ids_response.data)
+            #ext = data.get_extension()
+            #logger.error('Unsupported media type ' + str(ext) + ' sent to the server')
+            #raise UnsupportedMediaType(str(ext), "Supported media types: JPEG")
     else:
         method = str(request.method)
         logger.error('Not allowed method ' + method + ' called')
