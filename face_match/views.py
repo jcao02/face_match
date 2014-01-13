@@ -60,8 +60,8 @@ def compare_faces(request):
             return Response(ids_response.data)
         else:
             ext = data.get_extension()
-            logger.error('Unsupported media type ' + ext + ' sent to the server')
-            raise UnsupportedMediaType(ext, "Supported media types: JPEG")
+            logger.error('Unsupported media type ' + str(ext) + ' sent to the server')
+            raise UnsupportedMediaType(str(ext), "Supported media types: JPEG")
     else:
         method = str(request.method)
         logger.error('Not allowed method ' + method + ' called')
