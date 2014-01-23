@@ -10,6 +10,8 @@ from subprocess import Popen, PIPE
 import os
 import logging
 import sys
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 #Project includes
 from face_match import __file__
 from face_match.serializers import IdSerializer
@@ -37,21 +39,31 @@ def compare_faces(request):
         data = ImageDetected(request.POST, request.FILES)
         ids = []
         if data.is_valid():
-        ## Calling c++ function with output
-            p = Popen([path + "/random", "42"], stdout=PIPE)
+
+            # Remove file if exists
+            try: 
+                os.remove("input_image.jpeg")
+            except:
+                print "File wasn't there"
+
+            img = data.cleaned_data.get('photo')
+            path = default_storage.save('./tmp/input_image.jpeg', ContentFile(img.read()))
+
+            ## Calling c++ function with output
+            p = Popen(["./algorithm/main", "./tmp/input_image.jpeg", "facedata_fourth.xml"], stdout=PIPE)
             code = p.wait()
-            if code != 0:
-                raise RuntimeError
-            output = p.stdout.read()
-            print output
-            # Do whatever you need to do with the output
-            logger.error('Unexpected error ', sys.exc_info()[1])
+
+            # If return code is OK, we read the output
+            if code == 0:
+                output = p.stdout.read()
+                ids = output.split('\n') 
+            else:
+                print "Algorithm error"
+                logger.error('Unexpected error ', sys.exc_info()[1])
+
 
 
             # Generating JSON content
-            for i in range(21,43):
-                ids.append(Id(i))
-
             ids_response = IdSerializer(ids, many=True)
 
             #Loggin depending on face recognition algorithm used
