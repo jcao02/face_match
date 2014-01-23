@@ -42,7 +42,7 @@ def compare_faces(request):
 
             # Remove file if exists
             try: 
-                os.remove("input_image.jpeg")
+                os.remove("./tmp/input_image.jpeg")
             except:
                 print "File wasn't there"
 
@@ -50,8 +50,10 @@ def compare_faces(request):
             path = default_storage.save('./tmp/input_image.jpeg', ContentFile(img.read()))
 
             ## Calling c++ function with output
-            p = Popen(["./algorithm/main", "./tmp/input_image.jpeg", "facedata_fourth.xml"], stdout=PIPE)
+            p = Popen(["./main", "./tmp/input_image.jpeg", "./facedata_fourth.xml"], stdout=PIPE)
             code = p.wait()
+
+            print "Exit code: ", code
 
             # If return code is OK, we read the output
             if code == 0:
@@ -62,6 +64,13 @@ def compare_faces(request):
                 logger.error('Unexpected error ', sys.exc_info()[1])
 
 
+            print output
+            print ids
+
+            # Converting strings to ints
+            ids = filter(is_number, ids)
+            ids = map(int, ids)
+            ids = map(Id, ids)
 
             # Generating JSON content
             ids_response = IdSerializer(ids, many=True)
@@ -81,3 +90,12 @@ def compare_faces(request):
         logger.error('Not allowed method ' + method + ' called')
         # Raise method not allowed exception if the method isn't POST
         raise MethodNotAllowed(method, "Allowed methods: POST")
+
+
+def is_number(x):
+    """Checks if a string is a number"""
+    try:
+        int(x)
+        return True
+    except ValueError:
+        return False
